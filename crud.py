@@ -1,7 +1,7 @@
-# DB operations
+# DB operation functions
 
 from sqlalchemy.orm import Session
-from schemas import JobApplicationCreate
+from schemas import JobApplicationCreate, JobApplicationUpdate
 import models
 
 
@@ -34,17 +34,18 @@ def get_application_by_id(db: Session, application_id: int):
 def update_application(
         db: Session,
         application_id: int,
-        updated_data: JobApplicationCreate
+        updated_data: JobApplicationUpdate
 ):
     application = db.query(models.JobApplication).filter(models.JobApplication.id == application_id).first()
 
     if application is None:
         return None
     
-    application.company = updated_data.company
-    application.title = updated_data.title
-    application.status = updated_data.status
-    application.date_applied = updated_data.date_applied
+    # Update only the field(s) user required
+    update_data = updated_data.model_dump(exclude_unset = True)
+
+    for field, value in update_data.items():
+        setattr(application, field, value)
 
     db.commit()
     db.refresh(application)

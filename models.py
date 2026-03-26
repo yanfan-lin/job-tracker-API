@@ -1,7 +1,8 @@
-# DB table definition
+# DB table structure
 
 from sqlalchemy import Column, Integer, String, Date
 from database import Base
+
 
 # Table structure for job_applications
 class JobApplication(Base):

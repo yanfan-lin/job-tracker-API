@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from schemas import JobApplicationCreate, JobApplicationResponse
+from schemas import JobApplicationCreate, JobApplicationResponse, JobApplicationUpdate
 from database import get_db
 import crud
 
@@ -52,7 +52,7 @@ def get_application_by_id(
 @router.put("/applications/{application_id}", response_model=JobApplicationResponse)
 def update_application(
     application_id: int,
-    updated_data: JobApplicationCreate,
+    updated_data: JobApplicationUpdate,
     db: Session = Depends(get_db)
 ):  
     application = crud.update_application(db, application_id, updated_data)
@@ -61,7 +61,6 @@ def update_application(
         raise HTTPException(status_code= 404, detail= "Application not found")
     
     return application
-
 
 
 # Delete one job application by its ID
