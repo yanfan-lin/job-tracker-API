@@ -1,4 +1,4 @@
-# DB connection/session/base setup
+# DB connection/session/base/DB dependency setup
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -23,3 +23,13 @@ SessionLocal = sessionmaker(
 
 # parent class that future SQLAlchemy models inherit from
 Base = declarative_base()
+
+# Create one DB session per request,
+# then close it after the request finishes.
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()

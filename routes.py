@@ -1,22 +1,14 @@
-# DB session, and CRUD endpoints
+# Http routes
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import SessionLocal
 from schemas import JobApplicationCreate, JobApplicationResponse
-import models
+from database import get_db
+import crud
 
-# Create one DB session per request,
-# then close it after the request finishes.
-def get_db():
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
 
 router = APIRouter()
+
 
 # Test route to confirm the API server is running
 @router.get("/")
@@ -29,16 +21,9 @@ def read_root():
 def create_job_application(
     job_application: JobApplicationCreate,
     db: Session = Depends(get_db)
-):  
-    # Convert validated request data into a SQLAlchemy model object
-    new_application = models.JobApplication(**job_application.model_dump())
-
-    # Save the new record to DB
-    db.add(new_application)
-    db.commit()
-    db.refresh(new_application)
-
-    return new_application
+):
+    return crud.create_job_application(db, job_application)
+      
 
 
 # Return all saved job applications
@@ -46,10 +31,7 @@ def create_job_application(
 def get_all_applications(
     db: Session = Depends(get_db)
 ):
-    # Query all rows from the job_applications table
-    applications = db.query(models.JobApplication).all()
-
-    return applications
+    return crud.get_all_applications(db)
 
 
 # Return one job application by its job application ID
@@ -58,13 +40,11 @@ def get_application_by_id(
     application_id: int, 
     db: Session = Depends(get_db)
 ):  
-    # Find the matched row whose id == application_id
-    application = db.query(models.JobApplication).filter(models.JobApplication.id == application_id).first()
+    application = crud.get_application_by_id(db, application_id)
 
-    # Return 404 error if not matching row found
     if application is None:
         raise HTTPException(status_code= 404, detail= "Application not found")
-
+    
     return application
 
 
@@ -75,22 +55,13 @@ def update_application(
     updated_data: JobApplicationCreate,
     db: Session = Depends(get_db)
 ):  
-    # Find the matched row whose id == application_id
-    application = db.query(models.JobApplication).filter(models.JobApplication.id == application_id).first()
+    application = crud.update_application(db, application_id, updated_data)
 
-    # Return 404 error if not matching row found
     if application is None:
         raise HTTPException(status_code= 404, detail= "Application not found")
     
-    application.company = updated_data.company
-    application.title = updated_data.title
-    application.status = updated_data.status
-    application.date_applied = updated_data.date_applied
-
-    db.commit()
-    db.refresh(application)
-
     return application
+
 
 
 # Delete one job application by its ID
@@ -99,15 +70,9 @@ def delete_application(
     application_id: int,
     db: Session = Depends(get_db)
 ):  
-    # Find the matched row whose id == application_id
-    application = db.query(models.JobApplication).filter(models.JobApplication.id == application_id).first()
+    deleted = crud.delete_application(db, application_id)
 
-     # return 404 error if not matching row found
-    if application is None:
+    if not deleted:
         raise HTTPException(status_code= 404, detail= "Application not found")
     
-    # Delete matching row, then save the deletion to DB
-    db.delete(application)
-    db.commit()
-
     return {"message": "Application deleted successfully"}
