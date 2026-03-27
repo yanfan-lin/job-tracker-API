@@ -2,14 +2,13 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+import config
 
-
-DATABASE_URL = "sqlite:///./jobs.db"
 
 # engine connects Python to DB
 # check_same_thread=False is needed for SQLite when used with FastAPI
 engine = create_engine(
-    DATABASE_URL,
+    config.DATABASE_URL,
     connect_args={"check_same_thread": False}
 )
 

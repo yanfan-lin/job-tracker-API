@@ -1,4 +1,4 @@
-# API request/response schemas and validation rules
+# API request/response schemas and validation
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field
