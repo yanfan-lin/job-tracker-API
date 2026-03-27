@@ -1,7 +1,8 @@
 # DB operation functions
 
+from sqlalchemy import asc, desc
 from sqlalchemy.orm import Session
-from schemas import JobApplicationCreate, JobApplicationUpdate
+from schemas import JobApplicationCreate, JobApplicationUpdate, JobStatus, SortOrder, SortField
 import models
 
 
@@ -20,9 +21,40 @@ def create_job_application(
     return new_application
 
 
-# Return all rows from the job_applications table
-def get_all_applications(db: Session):
-    return db.query(models.JobApplication).all()
+# Return all rows from job applications
+# Optionally filter by status, sort by date_applied, and then pagnate results
+def get_all_applications(
+        db: Session, 
+        status: JobStatus | None = None,
+        sort_by: SortField | None = None,
+        order: SortOrder | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+):
+    query = db.query(models.JobApplication)
+
+    # Apply status filter if provided
+    if status is not None:
+        query = query.filter(models.JobApplication.status == status)
+    
+    # Apply sorting if requested
+    if sort_by == SortField.DATE_APPLIED:
+        if order == SortOrder.DESCENDING:
+            query = query.order_by(desc(models.JobApplication.date_applied))
+        else:
+            query = query.order_by(asc(models.JobApplication.date_applied))
+
+    # Apply offset if provided
+    if offset is not None:
+        query = query.limit(limit)
+
+    # Apply limit if provided
+    if limit is not None:
+        query = query.limit(limit)
+    
+
+    return query.all()
+
 
 
 # Get the matched row whose ID == application_id

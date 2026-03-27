@@ -13,6 +13,17 @@ class JobStatus(str, Enum):
     OFFER = "offer"
 
 
+# Enum for sorting job applications in ascending or descending order
+class SortOrder(str, Enum):
+    ASCENDING = "asc"
+    DESCENDING = "desc"
+
+
+# Enum for sorting job applications fields
+class SortField(str, Enum):
+    DATE_APPLIED = "date_applied"
+
+
 # Schema for input data when creating job application
 # "id" not required as DB will generate it 
 class JobApplicationCreate(BaseModel):

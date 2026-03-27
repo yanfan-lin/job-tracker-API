@@ -1,8 +1,8 @@
 # Http routes
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from schemas import JobApplicationCreate, JobApplicationResponse, JobApplicationUpdate
+from schemas import JobApplicationCreate, JobApplicationResponse, JobApplicationUpdate, JobStatus, SortOrder, SortField
 from database import get_db
 import crud
 
@@ -27,11 +27,17 @@ def create_job_application(
 
 
 # Return all saved job applications
+# Optionally filted by status, sorted by date_applied, and then pagnate results
 @router.get("/applications", response_model=list[JobApplicationResponse])
 def get_all_applications(
+    status: JobStatus | None = None,
+    sort_by: SortField | None = None,
+    order: SortOrder | None = None,
+    limit: int | None = Query(default = None, ge = 1),
+    offset: int | None = Query(default = None, ge = 0),
     db: Session = Depends(get_db)
 ):
-    return crud.get_all_applications(db)
+    return crud.get_all_applications(db, status, sort_by, order, limit, offset)
 
 
 # Return one job application by its job application ID
