@@ -33,11 +33,12 @@ def get_all_applications(
     status: JobStatus | None = None,
     sort_by: SortField | None = None,
     order: SortOrder | None = None,
+    search: str | None = None,
     limit: int | None = Query(default = None, ge = 1),
     offset: int | None = Query(default = None, ge = 0),
     db: Session = Depends(get_db)
 ):
-    return crud.get_all_applications(db, status, sort_by, order, limit, offset)
+    return crud.get_all_applications(db, status, sort_by, order, search, limit, offset)
 
 
 # Return one job application by its job application ID

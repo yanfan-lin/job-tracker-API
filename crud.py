@@ -1,6 +1,6 @@
 # DB operation functions
 
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, or_
 from sqlalchemy.orm import Session
 from schemas import JobApplicationCreate, JobApplicationUpdate, JobStatus, SortOrder, SortField
 import models
@@ -28,6 +28,7 @@ def get_all_applications(
         status: JobStatus | None = None,
         sort_by: SortField | None = None,
         order: SortOrder | None = None,
+        search: str | None = None,
         limit: int | None = None,
         offset: int | None = None,
 ):
@@ -36,6 +37,11 @@ def get_all_applications(
     # Apply status filter if provided
     if status is not None:
         query = query.filter(models.JobApplication.status == status)
+
+    # Apply search by keyword if provided
+    if search is not None:
+        keyword = f"%{search}%"
+        query = query.filter(or_(models.JobApplication.company.ilike(keyword), models.JobApplication.title.ilike(keyword)))
     
     # Apply sorting if requested
     if sort_by == SortField.DATE_APPLIED:
@@ -52,9 +58,7 @@ def get_all_applications(
     if limit is not None:
         query = query.limit(limit)
     
-
     return query.all()
-
 
 
 # Get the matched row whose ID == application_id
