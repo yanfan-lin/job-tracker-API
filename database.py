@@ -5,12 +5,16 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import config
 
 
-# engine connects Python to DB
+# Connecting engine to PostgreSQL
+engine = create_engine(config.DATABASE_URL)
+
+# Use this if switching DB to SQLite
 # check_same_thread=False is needed for SQLite when used with FastAPI
-engine = create_engine(
-    config.DATABASE_URL,
-    connect_args={"check_same_thread": False}
-)
+#engine = create_engine(
+#    config.DATABASE_URL,
+#    connect_args={"check_same_thread": False}
+#)
+
 
 # SessionLocal is used to create DB sessions
 # routes use these sessions to read/write DB data
