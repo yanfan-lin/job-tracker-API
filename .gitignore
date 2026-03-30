@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 jobs.db
 .env
+test_jobs.db
+.pytest_cache/
