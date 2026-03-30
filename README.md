@@ -137,3 +137,23 @@ This project was deployed to AWS using:
 - offer
 - rejected
 
+
+## Testing
+
+Basic API tests are included using `pytest` and FastAPI's `TestClient`.
+
+To run tests locally:
+```bash
+pytest
+```
+
+## CI
+This project includes a GitHub Actions CI workflow that runs automatically on:
+- push
+- pull request
+
+The workflow:
+- sets up Python
+- installs dependencies
+- runs the tests
+

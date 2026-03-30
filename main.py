@@ -1,14 +1,14 @@
-# App startup
+# Application startup
 
 from fastapi import FastAPI
 from database import engine, Base
 from routes import router
 
 
-# Create DB table based on models connected to Base
+# Create database tables from models registered with Base
 Base.metadata.create_all(bind=engine)
 
-# Create app instance
+# Create FastAPI app instance
 app = FastAPI()
 
 app.include_router(router)

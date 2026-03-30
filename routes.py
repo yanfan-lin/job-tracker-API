@@ -1,4 +1,4 @@
-# Http routes
+# HTTP routes
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -10,13 +10,13 @@ import crud
 router = APIRouter()
 
 
-# Test route to confirm the API server is running
+# Health check route to confirm the API server is running
 @router.get("/")
 def read_root():
     return {"message": "Job Tracker API is running"}
 
 
-# Create a new job application record and save it in the DB
+# Create a new job application record
 @router.post("/applications", response_model=JobApplicationResponse)
 def create_job_application(
     job_application: JobApplicationCreate,
@@ -27,7 +27,7 @@ def create_job_application(
 
 
 # Return all saved job applications
-# Optionally filted by status, sorted by date_applied, and then pagnate results
+# Optionally filter by status, sort by date_applied, and paginate results
 @router.get("/applications", response_model=list[JobApplicationResponse])
 def get_all_applications(
     status: JobStatus | None = None,
@@ -41,7 +41,7 @@ def get_all_applications(
     return crud.get_all_applications(db, status, sort_by, order, search, limit, offset)
 
 
-# Return one job application by its job application ID
+# Return a job application by ID
 @router.get("/applications/{application_id}", response_model=JobApplicationResponse)
 def get_application_by_id(
     application_id: int, 
@@ -55,7 +55,7 @@ def get_application_by_id(
     return application
 
 
-# Update one job application by its ID
+# Update a job application by ID
 @router.put("/applications/{application_id}", response_model=JobApplicationResponse)
 def update_application(
     application_id: int,
@@ -70,7 +70,7 @@ def update_application(
     return application
 
 
-# Delete one job application by its ID
+# Delete a job application by ID
 @router.delete("/applications/{application_id}")
 def delete_application(
     application_id: int,
