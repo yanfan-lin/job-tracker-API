@@ -9,7 +9,7 @@ from routes import router
 Base.metadata.create_all(bind=engine)
 
 # Create FastAPI app instance
-app = FastAPI()
+app = FastAPI(title="Job Application Tracker API")
 
 app.include_router(router)
 
