@@ -47,7 +47,13 @@ It supports creating, reading, updating, and deleting job application records, a
 
 ## Local Setup
 
-### 1. Create and activate a virtual environment
+### 1. Clone the repository
+```bash
+git clone https://github.com/yanfan-lin/job-tracker-API.git
+cd job-tracker-api
+```
+
+### 2. Create and activate a virtual environment
 
 ```bash
 python -m venv venv
@@ -57,13 +63,13 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-### 2. Install dependencies
+### 3. Install dependencies
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-### 3. Create local environment file
+### 4. Create local environment file
 
 For local SQLite development:
 
@@ -71,10 +77,10 @@ For local SQLite development:
 DATABASE_URL=sqlite:///./jobs.db
 ```
 
-You can also copy from .env.example
+You can also copy from **.env.example**
 
 
-### 4. Run the app
+### 5. Run the app
 
 Start the local server with:
 
