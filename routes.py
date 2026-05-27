@@ -17,7 +17,7 @@ def read_root():
 
 
 # Create a new job application record
-@router.post("/applications", response_model=JobApplicationResponse)
+@router.post("/applications", response_model=JobApplicationResponse, status_code=201)
 def create_job_application(
     job_application: JobApplicationCreate,
     db: Session = Depends(get_db)
@@ -56,7 +56,7 @@ def get_application_by_id(
 
 
 # Update a job application by ID
-@router.put("/applications/{application_id}", response_model=JobApplicationResponse)
+@router.patch("/applications/{application_id}", response_model=JobApplicationResponse)
 def update_application(
     application_id: int,
     updated_data: JobApplicationUpdate,

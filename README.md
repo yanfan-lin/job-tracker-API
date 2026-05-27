@@ -95,6 +95,18 @@ After the server starts, open:
 - Swagger UI: http://127.0.0.1:8000/docs
 
 
+## API Endpoints
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/` | Health check |
+| POST | `/applications` | Create a new job application (returns `201 Created`) |
+| GET | `/applications` | List job applications with optional filtering, sorting, search, pagination |
+| GET | `/applications/{application_id}` | Get a job application by ID |
+| PATCH | `/applications/{application_id}` | Partially update a job application |
+| DELETE | `/applications/{application_id}` | Delete a job application |
+
+
 ## Docker
 
 ### Build the Docker image

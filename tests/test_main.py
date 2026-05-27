@@ -62,7 +62,7 @@ def test_create_job_application():
 
     response = client.post("/applications", json=payload)
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["id"] == 1
     assert data["company"] == "Amazon"
