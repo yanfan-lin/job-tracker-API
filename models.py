@@ -10,7 +10,7 @@ class JobApplication(Base):
 
     # Unique ID for each job application record
     id = Column(Integer, primary_key=True, index=True)
-    company = Column(String)
-    title = Column(String)
-    status = Column(String)
-    date_applied = Column(Date)
+    company = Column(String(100), nullable=False)
+    title = Column(String(100), nullable=False)
+    status = Column(String, nullable=False)
+    date_applied = Column(Date, nullable=False)
