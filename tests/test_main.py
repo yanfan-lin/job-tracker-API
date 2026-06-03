@@ -124,10 +124,37 @@ def test_get_all_applications_with_limit_and_offset():
     assert data[0]["company"] == "Google"
     assert data[0]["date_applied"] == "2026-03-28"
 
+
 def test_get_application_by_id_not_found():
     response = client.get("/applications/999")
     assert response.status_code == 404
     assert response.json() == {"detail": "Application not found"}
+
+
+def test_update_job_application_partial():
+    payload = {
+        "company": "Amazon",
+        "title": "Backend Developer",
+        "status": "applied",
+        "date_applied": "2026-03-29"
+    }
+
+    create_response = client.post("/applications", json=payload)
+    application_id = create_response.json()["id"]
+
+    updated_payload = {
+        "status": "interview"
+    }
+
+    response = client.patch(f"/applications/{application_id}", json=updated_payload)
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == application_id
+    assert data["company"] == "Amazon"
+    assert data["title"] == "Backend Developer"
+    assert data["status"] == "interview"
+    assert data["date_applied"] == "2026-03-29"  
 
 
 def test_create_job_application_validation_error():
