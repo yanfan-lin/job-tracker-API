@@ -52,7 +52,7 @@ def get_all_applications(
 
     # Apply offset if provided
     if offset is not None:
-        query = query.limit(limit)
+        query = query.offset(offset)
 
     # Apply limit if provided
     if limit is not None:

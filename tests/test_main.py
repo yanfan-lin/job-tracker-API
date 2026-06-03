@@ -89,6 +89,41 @@ def test_get_all_applications():
     assert data[0]["status"] == "interview"
 
 
+def test_get_all_applications_with_limit_and_offset():
+    applications = [
+        {
+            "company": "Amazon",
+            "title": "Software Development Engineer",
+            "status": "rejected",
+            "date_applied": "2026-03-27"
+        },
+        {
+            "company": "Google",
+            "title": "Software Engineer",
+            "status": "interview",
+            "date_applied": "2026-03-28"
+        },
+        {
+            "company": "Microsoft",
+            "title": "Python Developer",
+            "status": "applied",
+            "date_applied": "2026-03-29"
+        }
+    ]
+
+    for payload in applications:
+        client.post("/applications", json=payload)
+    
+    response = client.get(
+        "/applications?sort_by=date_applied&order=asc&offset=1&limit=1"
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["company"] == "Google"
+    assert data[0]["date_applied"] == "2026-03-28"
+
 def test_get_application_by_id_not_found():
     response = client.get("/applications/999")
     assert response.status_code == 404

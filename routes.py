@@ -9,7 +9,6 @@ import crud
 
 router = APIRouter()
 
-
 # Health check route to confirm the API server is running
 @router.get("/")
 def read_root():
