@@ -101,6 +101,74 @@ def test_get_all_applications():
     assert data[0]["status"] == "interview"
 
 
+def test_get_all_applications_filter_by_status():
+    applications = [
+        {
+            "company": "Amazon",
+            "title": "Backend Developer",
+            "status": "applied",
+            "date_applied": "2026-03-27"
+        },
+        {
+            "company": "Google",
+            "title": "Software Engineer",
+            "status": "interview",
+            "date_applied": "2026-03-28"
+        },
+        {
+            "company": "Microsoft",
+            "title": "Python Developer",
+            "status": "applied",
+            "date_applied": "2026-03-29"
+        }
+    ]
+
+    for payload in applications:
+        client.post("/applications", json=payload)
+
+    response = client.get("/applications?status=applied")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    assert data[0]["status"] == "applied"
+    assert data[1]["status"] == "applied"
+
+
+def test_get_all_applications_search_by_keyword():
+    applications = [
+        {
+            "company": "Amazon",
+            "title": "Backend Developer",
+            "status": "applied",
+            "date_applied": "2026-03-27"
+        },
+        {
+            "company": "Google",
+            "title": "Software Engineer",
+            "status": "interview",
+            "date_applied": "2026-03-28"
+        },
+        {
+            "company": "Microsoft",
+            "title": "Python Developer",
+            "status": "applied",
+            "date_applied": "2026-03-29"
+        }
+    ]
+
+    for payload in applications:
+        client.post("/applications", json=payload)
+
+    response = client.get("/applications?search=Python")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["company"] == "Microsoft"
+    assert data[0]["title"] == "Python Developer"
+
+
 def test_get_all_applications_with_limit_and_offset():
     applications = [
         {
@@ -135,6 +203,44 @@ def test_get_all_applications_with_limit_and_offset():
     assert len(data) == 1
     assert data[0]["company"] == "Google"
     assert data[0]["date_applied"] == "2026-03-28"
+
+
+def test_get_all_applications_sort_by_date_applied_desc():
+    applications = [
+        {
+            "company": "Amazon",
+            "title": "Backend Developer",
+            "status": "applied",
+            "date_applied": "2026-03-27"
+        },
+        {
+            "company": "Google",
+            "title": "Software Engineer",
+            "status": "interview",
+            "date_applied": "2026-03-28"
+        },
+        {
+            "company": "Microsoft",
+            "title": "Python Developer",
+            "status": "applied",
+            "date_applied": "2026-03-29"
+        }
+    ]
+
+    for payload in applications:
+        client.post("/applications", json=payload)
+
+    response = client.get("/applications?sort_by=date_applied&order=desc")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 3
+    assert data[0]["company"] == "Microsoft"
+    assert data[0]["date_applied"] == "2026-03-29"
+    assert data[1]["company"] == "Google"
+    assert data[1]["date_applied"] == "2026-03-28"
+    assert data[2]["company"] == "Amazon"
+    assert data[2]["date_applied"] == "2026-03-27"
 
 
 def test_get_application_by_id_success():
@@ -188,7 +294,18 @@ def test_update_job_application_partial():
     assert data["company"] == "Amazon"
     assert data["title"] == "Backend Developer"
     assert data["status"] == "interview"
-    assert data["date_applied"] == "2026-03-29"  
+    assert data["date_applied"] == "2026-03-29"
+
+
+def test_update_job_application_not_found():
+    update_payload = {
+        "status": "interview"
+    }
+
+    response = client.patch("/applications/999", json=update_payload)
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Application not found"}
 
 
 def test_delete_job_application_success():
@@ -208,4 +325,11 @@ def test_delete_job_application_success():
     assert response.json() == {"message": "Application deleted successfully"}
 
     get_response = client.get(f"/applications/{application_id}")
-    assert get_response.status_code == 404   
+    assert get_response.status_code == 404
+
+
+def test_delete_job_application_not_found():
+    response = client.delete("/applications/999")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Application not found"}
