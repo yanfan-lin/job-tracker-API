@@ -71,6 +71,18 @@ def test_create_job_application():
     assert data["date_applied"] == "2026-03-29"
 
 
+def test_create_job_application_validation_error():
+    payload = {
+        "company": "A",
+        "title": "S",
+        "status": "invalid_status",
+        "date_applied": "2026-03-29"
+    }
+
+    response = client.post("/applications", json=payload)
+    assert response.status_code == 422
+
+
 def test_get_all_applications():
     payload = {
         "company": "Google",
@@ -125,6 +137,28 @@ def test_get_all_applications_with_limit_and_offset():
     assert data[0]["date_applied"] == "2026-03-28"
 
 
+def test_get_application_by_id_success():
+    payload = {
+        "company": "Amazon",
+        "title": "Backend Developer",
+        "status": "applied",
+        "date_applied": "2026-03-29"
+    }
+
+    create_response = client.post("/applications", json=payload)
+    application_id = create_response.json()["id"]
+
+    response = client.get(f"/applications/{application_id}")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == application_id
+    assert data["company"] == "Amazon"
+    assert data["title"] == "Backend Developer"
+    assert data["status"] == "applied"
+    assert data["date_applied"] == "2026-03-29"
+
+
 def test_get_application_by_id_not_found():
     response = client.get("/applications/999")
     assert response.status_code == 404
@@ -157,13 +191,21 @@ def test_update_job_application_partial():
     assert data["date_applied"] == "2026-03-29"  
 
 
-def test_create_job_application_validation_error():
+def test_delete_job_application_success():
     payload = {
-        "company": "A",
-        "title": "S",
-        "status": "invalid_status",
-        "date_applied": "2026-03-29"
+        "company": "Amazon",
+        "title": "Backend Developer",
+        "status": "applied",
+        "date_applied": "2026-03-03"
     }
 
-    response = client.post("/applications", json=payload)
-    assert response.status_code == 422
+    create_response = client.post("/applications", json=payload)
+    application_id = create_response.json()["id"]
+
+    response = client.delete(f"/applications/{application_id}")
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Application deleted successfully"}
+
+    get_response = client.get(f"/applications/{application_id}")
+    assert get_response.status_code == 404   
