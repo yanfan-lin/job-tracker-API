@@ -7,5 +7,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Read URL from environment if it exists,
-# Otherwise, use default local SQlite
+# Otherwise, use default local SQLite
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./jobs.db")
+

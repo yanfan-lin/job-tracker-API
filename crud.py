@@ -10,7 +10,7 @@ def create_job_application(
         db: Session,
         job_application: JobApplicationCreate
 ):
-    # Covert validated request data into a SQLAlchemy model object
+    # Convert validated request data into a SQLAlchemy model object
     new_application = models.JobApplication(**job_application.model_dump())
 
     # Save new record to the DB
@@ -22,7 +22,7 @@ def create_job_application(
 
 
 # Return all rows from job applications
-# Optionally filter by status, sort by date_applied, and then pagnate results
+# Optionally filter by status, sort by date_applied, and then paginate results
 def get_all_applications(
         db: Session, 
         status: JobStatus | None = None,
@@ -96,7 +96,7 @@ def delete_application(db: Session, application_id: int):
     if application is None:
         return False
     
-    # Delete matchhing row, then save the deletion to the DB
+    # Delete matching row, then save the deletion to the DB
     db.delete(application)
     db.commit()
 

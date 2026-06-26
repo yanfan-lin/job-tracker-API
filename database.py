@@ -5,16 +5,14 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import config
 
 
-# Create SQLAlchemy engine for PostgreSQL
-engine = create_engine(config.DATABASE_URL)
+connect_args = {}
 
-# Use this engine configuration when switching to SQLite
-# SQLite needs check_same_thread=False when used with FastAPI
-#engine = create_engine(
-#    config.DATABASE_URL,
-#    connect_args={"check_same_thread": False}
-#)
+if config.DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
 
+
+# Create SQLAlchemy engine from configured database URL
+engine = create_engine(config.DATABASE_URL, connect_args=connect_args)
 
 # SessionLocal creates database sessions
 # Routes use these sessions to read and write data

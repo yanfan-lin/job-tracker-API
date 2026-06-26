@@ -7,3 +7,4 @@ jobs.db
 .env
 test_jobs.db
 .pytest_cache/
+CLAUDE.md
