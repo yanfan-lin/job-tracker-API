@@ -205,6 +205,18 @@ def test_get_all_applications_with_limit_and_offset():
     assert data[0]["date_applied"] == "2026-03-28"
 
 
+def test_get_all_applications_invalid_query_parameters():
+    invalid_urls = [
+        "/applications?limit=0",
+        "/applications?offset=-1",
+        "/applications?status=invalid_status"
+    ]
+
+    for url in invalid_urls:
+        response = client.get(url)
+        assert response.status_code == 422
+
+
 def test_get_all_applications_sort_by_date_applied_desc():
     applications = [
         {
