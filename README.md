@@ -12,6 +12,7 @@ It supports creating, reading, updating, and deleting job application records, a
 - View a job application by ID
 - Update one or more fields of a job application on request
 - Delete job applications
+- Search job applications by keyword
 - Filter applications by status
 - Sort applications by date applied
 - Pagination with limit and offset
@@ -50,7 +51,7 @@ It supports creating, reading, updating, and deleting job application records, a
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/yanfan-lin/job-tracker-API.git
-cd job-tracker-api
+cd job-tracker-API
 ```
 
 ### 2. Create and activate a virtual environment
@@ -89,6 +90,21 @@ uvicorn main:app --reload
 ```
 
 
+## Environment and Database Configuration
+
+The application reads the database connection from the `DATABASE_URL` environment variable.
+
+- For local SQLite development, set:
+  
+```env
+DATABASE_URL=sqlite:///./jobs.db
+```
+
+- For Docker Compose local development, the app connects to the PostgreSQL service using the `DATABASE_URL` value defined in `docker-compose.yml`.
+  
+The `.env` file is intended for local development only and should not be committed. In deployed environments, `DATABASE_URL` should be provided through the host or container runtime environment.
+
+
 ## Local API Docs
 
 After the server starts, open:
@@ -106,6 +122,49 @@ After the server starts, open:
 | PATCH | `/applications/{application_id}` | Partially update a job application |
 | DELETE | `/applications/{application_id}` | Delete a job application |
 
+
+## Example API Requests
+
+Create a job application:
+```bash
+curl -X POST http://127.0.0.1:8000/applications \
+  -H "Content-Type: application/json" \
+  -d '{
+    "company": "Amazon",
+    "title": "SWE",
+    "status": "applied",
+    "date_applied": "2026-03-29"
+  }'
+```
+
+List applications with filtering, sorting, and pagination:
+```bash
+curl "http://127.0.0.1:8000/applications?status=applied&sort_by=date_applied&order=asc&limit=10&offset=0"
+```
+
+Search applications by keyword:
+```bash
+curl "http://127.0.0.1:8000/applications?search=Python"
+```
+
+Get one application by ID:
+```bash
+curl http://127.0.0.1:8000/applications/1
+```
+
+Partially update an application:
+```bash
+curl -X PATCH http://127.0.0.1:8000/applications/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "interview"
+  }'
+```
+
+Delete an application:
+```bash
+curl -X DELETE http://127.0.0.1:8000/applications/1
+```
 
 ## Docker
 
@@ -148,7 +207,7 @@ This project was deployed to AWS using:
 
 ## Job Status Values
 
-### Allowed values for status :
+### Allowed values for status:
 
 - applied
 - interview
@@ -158,20 +217,32 @@ This project was deployed to AWS using:
 
 ## Testing
 
-Basic API tests are included using `pytest` and FastAPI's `TestClient`.
+API tests are included using `pytest` and FastAPI’s `TestClient`.
+
+The test suite covers:
+- health check
+- create/read/update/delete flows
+- request validation errors
+- filtering by status
+- keyword search
+- sorting by date applied
+- limit and offset pagination
+- invalid query parameters
+- not-found behavior for read, update, and delete operations
 
 To run tests locally:
+
 ```bash
 pytest
 ```
 
 ## CI
-This project includes a GitHub Actions CI workflow that runs automatically on:
-- push
-- pull request
+This project includes a GitHub Actions workflow that runs automatically on:
+- `push`
+- `pull_request`
 
 The workflow:
+- checks out the repository
 - sets up Python
-- installs dependencies
-- runs the tests
-
+- installs dependencies from `requirements.txt`
+- runs `pytest`
