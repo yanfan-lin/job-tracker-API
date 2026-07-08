@@ -1,5 +1,8 @@
 # Job Application Tracker API
 
+[![My Skills](https://skillicons.dev/icons?i=py,fastapi,postgres,sqlite,docker,aws,git,github,githubactions)](https://skillicons.dev)
+
+![Python CI](https://github.com/yanfan-lin/job-tracker-API/actions/workflows/ci.yml/badge.svg)
 ## Project Overview
 Job Application Tracker API is a backend project for tracking job applications, built with FastAPI.
 
